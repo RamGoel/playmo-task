@@ -39,7 +39,7 @@ export const questionsData = [
         dataKey:"program",
         placeholder: "",
         choices: ["Preschool","School", "Parent - toddler programs","Other classes - sports, cultural, etc."],
-        questionType: "choice",
+        questionType: "single-choice",
         nextQuestionIndex: (selectedChoice:string) => {
             if (selectedChoice ===  "Parent - toddler programs") {
                 return 2;
@@ -93,7 +93,7 @@ export const questionsData = [
             "School",
             "Other classes - sports, cultural, etc.",
         ],
-        questionType: "choice",
+        questionType: "single-choice",
         nextQuestionIndex: () => {
             return 5;
          },
@@ -112,7 +112,7 @@ export const questionsData = [
             "Once a month",
             "Rarely"
         ],
-        questionType: "choice",
+        questionType: "single-choice",
         nextQuestionIndex: () => {
             return -1;
         },

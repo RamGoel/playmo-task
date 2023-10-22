@@ -9,7 +9,7 @@ import Option from '@/components/option/option.component';
 import Input from '@/components/input/input.component';
 
 interface FormDataTypes {
-  [key: string]: string
+  [key: string]: string | any[]
 }
 const Form = () => {
   const [index, setIndex] = useState(0)
@@ -38,8 +38,27 @@ const Form = () => {
                 <Option
                   key={i}
                   text={option}
-                  handler={() => setFormData({ ...formData, [questionsData[index].dataKey]: option })}
-                  isSelected={formData[questionsData[index].dataKey] === option}
+                  handler={() => {
+                    if (questionsData[index].questionType === 'single-choice') {
+                      setFormData({ ...formData, [questionsData[index].dataKey]: option })
+                      return;
+                    } else {
+                      if (!formData[questionsData[index].dataKey]) {
+                        setFormData({
+                          ...formData,
+                          [questionsData[index].dataKey]: [option]
+                        })
+                      } else {
+                        
+                        setFormData({
+                          ...formData,
+                          [questionsData[index].dataKey] : [...formData[questionsData[index].dataKey], option]
+                        })
+                        return;
+                      }
+                    }
+                  }}
+                  isSelected={formData[questionsData[index].dataKey]?.includes(option)}
                 />
               )
             }) : <Input
