@@ -49,12 +49,18 @@ const Form = () => {
                           [questionsData?.[index]?.dataKey]: [option]
                         })
                       } else {
-                        
-                        setFormData({
-                          ...formData,
-                          [questionsData?.[index]?.dataKey] : [...formData?.[questionsData?.[index]?.dataKey], option]
-                        })
-                        return;
+                        const dataKey = formData?.[questionsData?.[index]?.dataKey];
+                        if (Array.isArray(dataKey)) {
+                          setFormData({
+                            ...formData,
+                            [questionsData?.[index]?.dataKey]: [...dataKey, option]
+                          })
+                        } else {
+                          setFormData({
+                            ...formData,
+                            [questionsData?.[index]?.dataKey]: [dataKey, option]
+                          })
+                        }
                       }
                     }
                   }}
@@ -84,12 +90,12 @@ const Form = () => {
                 }
                 return
               }
-              const val = questionsData?.[index]?.nextQuestionIndex(formData?.[questionsData?.[index]?.dataKey])
+              const val = questionsData?.[index]?.nextQuestionIndex(formData?.[questionsData?.[index]?.dataKey] as string)
               if (val !== -1 && val !== undefined) {
                 setIndex(val)
               } else {
-                setFormData({})
                 router.push('/success')
+                setFormData({})
               }
               console.log(formData)
             }} isDisabled={false} />
