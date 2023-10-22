@@ -3,56 +3,103 @@
 import React, { useEffect, useState } from 'react'
 import { questionsData } from '@/utils/data';
 import { useRouter } from 'next/navigation';
+import Question from '@/components/question/question.component';
+import Button from '@/components/button/button.component';
+import Option from '@/components/option/option.component';
+import Input from '@/components/input/input.component';
+
+interface FormDataTypes {
+  [key: string]: string | any[]
+}
 const Form = () => {
-
   const [index, setIndex] = useState(0)
-  const [currentValue, setCurrentValue] = useState<any>(null)
-  const ref = React.useRef(null);
+  const [formData, setFormData] = useState<FormDataTypes>({})
+  const [error, setError]= useState('')
   const router = useRouter()
-  useEffect(() => {
-    // @ts-ignore
-    ref?.current?.focus()
-  }, [])
+  
 
+  useEffect(() => {
+    const timeoutId=setTimeout(() => {
+      setError('')
+    }, 2000)
+    
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  },[error])
   return (
     <div className='main-form h-screen w-screen flex items-center justify-center'>
-      <div className='flex flex-col w-1/3'>
-        <label className='text-violet-900 text-xl mb-3'>{questionsData[index].question}</label>
-
+      <div className='flex flex-col w-11/12 md:w-1/2 lg:w-1/3'>
+        <Question question={questionsData?.[index]?.question} />
         <div className='flex flex-col'>
           {
-            questionsData[index].choices ? questionsData[index]?.choices.map((option, i) => {
+            questionsData?.[index]?.choices ? questionsData?.[index]?.choices?.map((option, i) => {
               return (
-                <button
+                <Option
                   key={i}
-                  className={`rounded-lg border-2 py-2 my-2 ${currentValue === i ? 'bg-violet-900' : 'border-gray-300'}`}
-                  onClick={() => setCurrentValue(i)}
-                >
-                  <p className={`text-md text-black ${currentValue === i ? 'text-white' : ''}`}>{option}</p>
-                </button>
+                  text={option}
+                  handler={() => {
+                    if (questionsData?.[index]?.questionType === 'single-choice') {
+                      setFormData({ ...formData, [questionsData?.[index]?.dataKey]: option })
+                      return;
+                    } else {
+                      if (!formData?.[questionsData?.[index]?.dataKey]) {
+                        setFormData({
+                          ...formData,
+                          [questionsData?.[index]?.dataKey]: [option]
+                        })
+                      } else {
+                        const dataKey = formData?.[questionsData?.[index]?.dataKey];
+                        if (Array.isArray(dataKey)) {
+                          setFormData({
+                            ...formData,
+                            [questionsData?.[index]?.dataKey]: [...dataKey, option]
+                          })
+                        } else {
+                          setFormData({
+                            ...formData,
+                            [questionsData?.[index]?.dataKey]: [dataKey, option]
+                          })
+                        }
+                      }
+                    }
+                  }}
+                  isSelected={formData?.[questionsData?.[index]?.dataKey]?.includes(option)}
+                />
               )
-            }) : <input
-              ref={ref}
-              onChange={(e) => setCurrentValue(e.target.value)}
-              className='p-3 w-full focus-visible:outline-none border-2 rounded-xl border-violet-900 text-violet-900'
-              type={questionsData[index].inputType}
-              placeholder={questionsData[index].placeholder}
+            }) : <Input
+              value={formData?.[questionsData?.[index]?.dataKey]}
+              handler={(val) => setFormData({ ...formData, [questionsData?.[index]?.dataKey]: val })}
+              inputType={questionsData?.[index]?.inputType}
+              placeholder={questionsData?.[index]?.placeholder}
             />
           }
 
-          <button disabled={currentValue == null} onClick={() => {
-            console.log(currentValue)
-            const val = questionsData[index].nextQuestionIndex(currentValue)
-            if (val !== -1 && val !== undefined) {
-              setIndex(val)
-            } else {
-              router.push('/success')
-            }
-            setCurrentValue(null)
-          }} className={`${currentValue===null?'bg-gray-300':'bg-violet-900'} h-12 w-12 rounded-full mt-2`}
-            style={{ marginLeft: 'auto' }}>
-            <p className={` ${currentValue === null ? 'text-black' : 'text-white'} text-xl`}>→</p>
-          </button>
+          <div className='flex items-center justify-between'>
+
+            <Button arrowText='←' handler={() => {
+              setIndex(questionsData?.[index]?.prevQuestionIndex())
+            }} isDisabled={index === 0} />
+            <p className='text-sm transition-all text-red-600 error-message'>{error}</p>
+            <Button arrowText='→' handler={() => {
+              if (!formData?.[questionsData?.[index]?.dataKey]) {
+                if (index === 0) {
+                  setError('Please enter date of birth')
+                } else {
+                  setError('Please select an option')
+                }
+                return
+              }
+              const val = questionsData?.[index]?.nextQuestionIndex(formData?.[questionsData?.[index]?.dataKey] as string)
+              if (val !== -1 && val !== undefined) {
+                setIndex(val)
+              } else {
+                router.push('/success')
+                setFormData({})
+              }
+              console.log(formData)
+            }} isDisabled={false} />
+          </div>
         </div>
       </div>
     </div>
