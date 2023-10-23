@@ -48,7 +48,7 @@ export const questionsData = [
         prevQuestionIndex:()=>0
     },
     {
-        question: "What do you like best about the parent-toddler program?",
+        question: "What do you like best about the parent-toddler program?  (Select all that apply)",
         inputType: "single",
         dataKey:"like",
         placeholder: "",
@@ -67,7 +67,7 @@ export const questionsData = [
         prevQuestionIndex:()=>1
     },
      {
-        question: "What do you not like about the parent-toddler program?",
+        question: "What do you not like about the parent-toddler program? (Select all that apply)",
          inputType: "single",
         dataKey:"dislike",
         placeholder: "",
