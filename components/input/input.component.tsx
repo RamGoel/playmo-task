@@ -18,7 +18,7 @@ const Input = ({handler,value, inputType, placeholder}:InputStateProps) => {
             ref={ref}
             value={value}
             onChange={(e) => handler(e.target.value)}
-            className='p-3 w-full focus-visible:outline-none border-2 rounded-xl border-violet-900 text-violet-900'
+            className='p-3 w-full focus-visible:outline-none border-2 rounded-xl border-gray-300 text-violet-900'
             type={inputType}
             placeholder={placeholder}
         />
