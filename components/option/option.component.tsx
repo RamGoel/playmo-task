@@ -8,7 +8,7 @@ interface OptionStateProps {
 const Option = ({text, handler, isSelected}:OptionStateProps) => {
   return (
       <button
-          className={`rounded-lg border-2 py-2 my-2 ${isSelected? 'bg-violet-900' : 'border-gray-300'}`}
+          className={`rounded-lg border-2 py-2 my-2 ${isSelected? 'bg-violet-900 border-violet-900' : 'border-gray-300'}`}
           onClick={handler}
       >
           <p className={`text-md text-black ${isSelected? 'text-white' : ''}`}>{text}</p>

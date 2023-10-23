@@ -7,6 +7,7 @@ import Question from '@/components/question/question.component';
 import Button from '@/components/button/button.component';
 import Option from '@/components/option/option.component';
 import Input from '@/components/input/input.component';
+import Loader from '@/components/loader/loader.component';
 
 interface FormDataTypes {
   [key: string]: string | any[]
@@ -16,6 +17,7 @@ const Form = () => {
   const [formData, setFormData] = useState<FormDataTypes>({})
   const [error, setError]= useState('')
   const router = useRouter()
+  const [isLoading, setLoading] = useState(true)
   
 
   useEffect(() => {
@@ -26,9 +28,18 @@ const Form = () => {
     return () => {
       clearTimeout(timeoutId)
     }
-  },[error])
+  }, [error])
+  
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+      setFormData({})
+    }, 2000);
+  }, [])
+
   return (
     <div className='main-form h-screen w-screen flex items-center justify-center'>
+      <Loader isVisible={isLoading} />
       <div className='flex flex-col w-11/12 md:w-1/2 lg:w-1/3 transition-all'>
         <Question question={questionsData?.[index]?.question} />
         <div className='flex flex-col'>
@@ -90,7 +101,7 @@ const Form = () => {
             }} isDisabled={index === 0} />
             <p className='text-sm transition-all text-red-600 error-message'>{error}</p>
             <Button arrowText='→' handler={() => {
-              if (!formData?.[questionsData?.[index]?.dataKey]) {
+              if (!formData?.[questionsData?.[index]?.dataKey] || formData?.[questionsData?.[index]?.dataKey]?.length === 0) {
                 if (index === 0) {
                   setError('Please enter date of birth')
                 } else {
