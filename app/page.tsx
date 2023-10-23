@@ -29,7 +29,7 @@ const Form = () => {
   },[error])
   return (
     <div className='main-form h-screen w-screen flex items-center justify-center'>
-      <div className='flex flex-col w-11/12 md:w-1/2 lg:w-1/3'>
+      <div className='flex flex-col w-11/12 md:w-1/2 lg:w-1/3 transition-all'>
         <Question question={questionsData?.[index]?.question} />
         <div className='flex flex-col'>
           {
@@ -49,16 +49,24 @@ const Form = () => {
                           [questionsData?.[index]?.dataKey]: [option]
                         })
                       } else {
-                        const dataKey = formData?.[questionsData?.[index]?.dataKey];
-                        if (Array.isArray(dataKey)) {
-                          setFormData({
-                            ...formData,
-                            [questionsData?.[index]?.dataKey]: [...dataKey, option]
-                          })
+                        const alreadyPresentData = formData?.[questionsData?.[index]?.dataKey];
+                        if (Array.isArray(alreadyPresentData)) {
+                          if (alreadyPresentData?.includes(option)) {
+                            setFormData({
+                              ...formData,
+                              [questionsData?.[index]?.dataKey]: alreadyPresentData?.filter((item) => item !== option)
+                            })
+                          } else {
+                            
+                            setFormData({
+                              ...formData,
+                              [questionsData?.[index]?.dataKey]: [...alreadyPresentData, option]
+                            })
+                          }
                         } else {
                           setFormData({
                             ...formData,
-                            [questionsData?.[index]?.dataKey]: [dataKey, option]
+                            [questionsData?.[index]?.dataKey]: [alreadyPresentData, option]
                           })
                         }
                       }
@@ -95,7 +103,6 @@ const Form = () => {
                 setIndex(val)
               } else {
                 router.push('/success')
-                setFormData({})
               }
               console.log(formData)
             }} isDisabled={false} />
